@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { toast } from "react-hot-toast";
 import CustomInput from "@/components/CustomInput";
 import CustomButton from "@/components/CustomButton";
 import { useRouter } from "next/navigation";
@@ -15,6 +16,7 @@ const SignUp = () => {
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   function isValidEmail(email: string) {
     const regrex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     return regrex.test(email);
@@ -24,33 +26,40 @@ const SignUp = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      if (email && fullName && password && username) {
-        if (isValidEmail(email)) {
-          const response = await fetch("/api/auth/register", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+      if (!email && !fullName && !password && !username) {
+        return toast.error("All credentials are required");
+      }
 
-            body: JSON.stringify({
-              name: fullName,
-              email: email,
-              username: username,
-              password: password,
-              loggedInWithPassword: true,
-            }),
-          });
+      if (!isValidEmail(email)) {
+        return toast.error("Provide a valid email");
+      }
 
-          if (response.ok) {
-            router.push("/");
-          }
-        } else {
-          alert("Provide a valid email");
-        }
-      } else {
-        alert("Provide all credentials");
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          name: fullName,
+          email: email,
+          username: username,
+          password: password,
+          loggedInWithPassword: true,
+        }),
+      });
+
+      const json = await response.json();
+
+      if (response.ok) {
+        router.push("/");
+      }
+
+      if (!response.ok) {
+        console.log(json)
       }
     } catch (error) {
+      toast.error("User already exist");
       console.log(error);
     } finally {
       setIsLoading(false);

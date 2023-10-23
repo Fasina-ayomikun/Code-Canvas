@@ -34,7 +34,7 @@ export const POST = async (req: Request, res: Response) => {
     const token = cookieStore.get("token");
     let verifiedUser = {};
     if (token?.value) {
-      verifiedUser = await jwt.verify(token?.value, "JWT_SECRET");
+      verifiedUser = jwt.verify(token?.value, "JWT_SECRET");
 
       if (!verifiedUser) {
         return new Response("Unauthenticated user", { status: 403 });

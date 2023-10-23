@@ -1,5 +1,7 @@
-import "./globals.css";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "react-hot-toast";
+
+import "./globals.css";
 
 export const metadata = {
   title: "Next.js",
@@ -15,7 +17,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <body>{children}</body>
+      <body>
+        <Toaster position="top-right" />
+        {children}
+      </body>
     </html>
   );
 }
