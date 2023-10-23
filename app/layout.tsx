@@ -1,6 +1,4 @@
-import { SessionProvider } from "next-auth/react";
-import { Toaster } from "react-hot-toast";
-
+import AuthProvider from "@/components/AuthProvider";
 import "./globals.css";
 
 export const metadata = {
@@ -18,8 +16,9 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body>
-        <Toaster position="top-right" />
+       <AuthProvider>
         {children}
+       </AuthProvider>
       </body>
     </html>
   );
