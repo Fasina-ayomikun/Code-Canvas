@@ -3,6 +3,7 @@ import { connectToDB } from "@/utils/connect";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
+import { NextResponse } from "next/server";
 
 export const POST = async (req: Request, res: Response) => {
   const { name, username, loggedInWithPassword, email, password } =
@@ -45,7 +46,7 @@ export const POST = async (req: Request, res: Response) => {
     } else {
       await User.create({ name, email, username, loggedInWithPassword });
     }
-    return new Response("User successfully created", {
+    return NextResponse.json("User successfully created", {
       status: 201,
       headers: {
         "Set-Cookie": cookie,

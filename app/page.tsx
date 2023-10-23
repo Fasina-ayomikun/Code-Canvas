@@ -7,6 +7,8 @@ import CustomInput from "@/components/CustomInput";
 import CustomButton from "@/components/CustomButton";
 import { useRouter } from "next/navigation";
 import { useSession, signIn, getProviders } from "next-auth/react";
+import { toast } from "react-hot-toast";
+
 const Home = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,25 +21,31 @@ const Home = () => {
 
     setIsLoading(true);
     try {
-      if (email && password) {
-        const response = await fetch("/api/auth/login", {
-          method: "POST",
-          body: JSON.stringify({
-            email: email,
-            password: password,
-          }),
+      if (!email && !password) {
+        return toast.error("All credentials are required");
+      }
+
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      await response.json();
+
+      if (response.ok) {
+        await signIn("credentials", {
+          callbackUrl: "/feed",
+          email,
         });
-        console.log(response);
-        if (response.ok) {
-          await signIn("credentials", {
-            callbackUrl: "/feed",
-            email,
-          });
-          // router.push("/feed");
-        }
+        toast.success("Success!");
+        router.push("/feed");
       }
     } catch (error) {
       console.log(error);
+      toast.error("Invalid email or password");
     } finally {
       setIsLoading(false);
     }
