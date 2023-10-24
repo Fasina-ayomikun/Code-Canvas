@@ -30,9 +30,13 @@ const SignUp = () => {
       return;
     }
 
-    const file = e.target.files[0];
-    const base64 = await convertToBase64(file) as string;
-    setImage(base64)
+    try {
+      const file = e.target.files[0];
+      const base64 = await convertToBase64(file) as string;
+      setImage(base64);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
