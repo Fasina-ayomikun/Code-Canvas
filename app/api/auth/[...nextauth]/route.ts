@@ -71,7 +71,6 @@ export const authOptions = {
   callbacks: {
     //TODO:Change type any to other type
     async session({ session }: any) {
-      console.log("session", session);
       const sessionUser = await User.findOne({
         email: session?.user.email,
       });
@@ -84,6 +83,7 @@ export const authOptions = {
         bio: sessionUser.bio,
         tags: sessionUser.tags,
         bannerImage: sessionUser.bannerImage,
+        image: sessionUser.image,
       };
     },
     //TODO: When deleting account redirect to login page

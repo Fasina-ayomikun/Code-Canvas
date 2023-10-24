@@ -4,23 +4,47 @@ import React, { useEffect, useState } from "react";
 import CustomInput from "./CustomInput";
 import Link from "next/link";
 import Toggle from "./Toggle";
-import { getSession, useSession } from "next-auth/react";
+import { getSession, signOut, useSession } from "next-auth/react";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import { SessionType } from "@/common.types";
+import { useRouter } from "next/navigation";
 
-const Navbar = () => {
+const Navbar = ({
+  setOpenModal,
+}: {
+  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const [searchText, setSearchText] = useState("");
   const [isFixed, setIsFixed] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [session, setSession] = useState<SessionType | null>(null);
+  const router = useRouter();
+  //TODO:Put ina separate file
   const dropDownContent = [
-    { title: "Edit Post", url: "/feed" },
-    { title: "Edit Post", url: "/feed" },
-    { title: "Edit Post", url: "/feed" },
+    {
+      title: "Create Post",
+      handleClick: () => {
+        setOpenModal(true);
+      },
+    },
+    {
+      title: "Update Profile",
+      handleClick: () => {
+        router.push(`/update-profile/${session?.id}`);
+      },
+    },
+    {
+      title: "Sign Out",
+      handleClick: () => {
+        signOut({ callbackUrl: "/" });
+        router.push("/");
+      },
+    },
   ];
   const handleSession = async () => {
     const session = await getSession();
+
     if (session) {
       setSession(session);
     }
@@ -109,7 +133,7 @@ const Navbar = () => {
               width={40}
               height={40}
               onClick={() => setIsDropDownOpen((prev) => !prev)}
-              className=' aspect-square object-cover rounded-full min-w-min'
+              className=' aspect-square object-fill rounded-full min-w-min'
             />
           )}
           <p className='font-bold text-dark-gray hidden sm:block text-xs'>

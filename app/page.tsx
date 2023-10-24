@@ -78,7 +78,7 @@ const Home = () => {
               isLoading={isLoading}
               handleClick={() => {}}
               btnType='submit'
-              styles='bg-blue-500 text-white'
+              styles='w-full rounded-md bg-blue-500 text-white'
             />
           </div>
           <div className='flex items-center px-4 justify-center gap-4 my-6'>
@@ -90,13 +90,13 @@ const Home = () => {
           <CustomButton
             handleClick={() => signIn("google")}
             text='Log in with Google'
-            styles='text-red-600 bg-transparent border-[2px] border-red-400 text-red-500 gap-2'
+            styles='w-full  rounded-md text-red-600 bg-transparent border-[2px] border-red-400 text-red-500 gap-2'
             iconSrc='/google.svg'
           />
           <CustomButton
             handleClick={() => signIn("github")}
             text='Log in with Github'
-            styles=' bg-black border-[2px] border-black text-white gap-2'
+            styles='w-full  rounded-md bg-black border-[2px] border-black text-white gap-2'
             iconSrc='/github.svg'
           />
         </form>
