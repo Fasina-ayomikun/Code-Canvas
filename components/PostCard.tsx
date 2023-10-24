@@ -10,15 +10,16 @@ const PostCard = ({ post }: PostCardProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const { profile, desc, noOfComments, noOfLikes, imageUrl, tags } = post;
   const dropDownContent = [
-    { title: "Edit Post", url: "/feed" },
-    { title: "Edit Post", url: "/feed" },
-    { title: "Edit Post", url: "/feed" },
+    { title: "Edit Post", handleClick: () => {} },
+    { title: "Edit Post", handleClick: () => {} },
+    { title: "Edit Post", handleClick: () => {} },
   ];
   return (
     <div className='px-5 box_shadow2  w-full mx-auto my-10 py-3 bg-white'>
       <div className='flex items-center gap-2  justify-between'>
         <div className='flex px-4 items-start gap-2 py-3 '>
           <Image
+            //TODO:change imageUrl to image
             src={profile?.imageUrl}
             alt='profile'
             width={40}

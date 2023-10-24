@@ -9,6 +9,7 @@ import CustomButton from "@/components/CustomButton";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import convertToBase64 from "@/utils/convertToBase64";
+import { uploadImage } from "../lib/actions";
 
 const SignUp = () => {
   //FIXME: Refactor code into one useState instead of six
@@ -18,6 +19,7 @@ const SignUp = () => {
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
   const [image, setImage] = useState("");
+  const [preview, setPreview] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   function isValidEmail(email: string) {
@@ -34,7 +36,11 @@ const SignUp = () => {
     try {
       const file = e.target.files[0];
       const base64 = (await convertToBase64(file)) as string;
-      setImage(base64);
+      setPreview(base64);
+      const imageUrl = await uploadImage(base64);
+      const data = await imageUrl?.json();
+
+      imageUrl && setImage(data?.url);
     } catch (error) {
       console.log(error);
     }
@@ -52,7 +58,7 @@ const SignUp = () => {
       if (!isValidEmail(email)) {
         return toast.error("Provide a valid email");
       }
-
+      if (preview && !image) return;
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
@@ -140,11 +146,11 @@ const SignUp = () => {
                 onChange={(e) => handleChange(e)}
               />
 
-              {image && (
+              {preview && (
                 <div className='flex justify-center items-center m-2'>
                   <p className='flex items-center gap-3'>
                     <span className='text-sm'>Preview:</span>
-                    <Image src={image} alt='image' width={60} height={60} />
+                    <Image src={preview} alt='image' width={60} height={60} />
                   </p>
                 </div>
               )}
@@ -157,7 +163,7 @@ const SignUp = () => {
               text='Sign Up'
               handleClick={() => {}}
               btnType='submit'
-              styles='bg-blue-500 text-white'
+              styles='w-full  rounded-md bg-blue-500 text-white'
             />
           </div>
           <div className='flex items-center px-4 justify-center gap-4 my-6'>
@@ -169,13 +175,13 @@ const SignUp = () => {
           <CustomButton
             handleClick={() => signIn("google")}
             text='Sign up with Google'
-            styles='text-red-600 bg-transparent border-[2px] border-red-400 text-red-500 gap-2'
+            styles='w-full  rounded-md text-red-600 bg-transparent border-[2px] border-red-400 text-red-500 gap-2'
             iconSrc='/google.svg'
           />
           <CustomButton
             handleClick={() => signIn("github")}
             text='Sign up with Github'
-            styles=' bg-black border-[2px] border-black text-white gap-2'
+            styles='w-full  rounded-md bg-black border-[2px] border-black text-white gap-2'
             iconSrc='/github.svg'
           />
         </form>

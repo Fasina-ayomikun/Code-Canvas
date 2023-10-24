@@ -1,19 +1,34 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomInput from "./CustomInput";
 import Image from "next/image";
+import { SessionType } from "@/common.types";
+import { getSession } from "next-auth/react";
 
 const MiniSearch = () => {
   const [text, setText] = useState("");
+  const [session, setSession] = useState<SessionType | null>(null);
+  const handleSession = async () => {
+    const session = await getSession();
+
+    if (session) {
+      setSession(session);
+    }
+  };
+  useEffect(() => {
+    handleSession();
+  }, []);
   return (
     <section className='flex items-center gap-5 px-5 box_shadow2  w-full mx-auto my-10 py-2 bg-white'>
-      <Image
-        src='/hero1.jpg'
-        alt='profile'
-        width={60}
-        height={60}
-        className=' aspect-square object-cover rounded-full'
-      />
+      {session?.image && (
+        <Image
+          src={session?.image}
+          alt='profile'
+          width={60}
+          height={60}
+          className=' aspect-square object-fill  rounded-full'
+        />
+      )}
       <div
         className={`bg-transparent  h-12 border-gray-300 rounded-full w-full flex justify-between px-3 my-4 border-[1px] relative  `}
       >

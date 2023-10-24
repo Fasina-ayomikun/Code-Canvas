@@ -13,6 +13,7 @@ export type PostProps = {
   tags: string[];
 };
 export type SessionType = {
+  id?: string | null;
   name?: string | null;
   email?: string | null;
   image?: string | null;

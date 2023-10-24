@@ -3,19 +3,30 @@ import CustomButton from "@/components/CustomButton";
 import CustomInput from "@/components/CustomInput";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { uploadImage } from "../../lib/actions";
+import { useRouter } from "next/navigation";
+import { SessionType } from "@/common.types";
+import { getSession } from "next-auth/react";
 
-const UpdateProfile = () => {
+const UpdateProfile = ({ params }: { params: { id: string } }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [bio, setBio] = useState("");
   const [tagText, setTagText] = useState("");
   const [tags, setTags] = useState<string[]>([]);
-  const [file, setFile] = useState<File | null>(null);
+  const [image, setImage] = useState("");
+  const [bannerImage, setBannerImage] = useState("");
   const [preview, setPreview] = useState("");
-
+  const [session, setSession] = useState<SessionType | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
+  const handleSession = async () => {
+    const response = await getSession();
+
+    session && setSession(response);
+  };
   const handleTags = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTagText(value);
@@ -46,10 +57,13 @@ const UpdateProfile = () => {
       return;
     }
 
-    reader.onload = () => {
+    reader.onload = async () => {
       const result = reader.result as string;
 
       setPreview(result);
+      const response = await uploadImage(result);
+      const data = await response?.json();
+      response && setImage(data?.url);
     };
     reader.onerror = (errorEvent) => {
       console.error("Error reading file:", errorEvent);
@@ -57,10 +71,65 @@ const UpdateProfile = () => {
 
     reader.readAsDataURL(selectedFile);
   };
+
+  const handleBannerImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    e.preventDefault();
+
+    const reader = new FileReader();
+    const selectedFile = e.target.files?.[0];
+
+    if (!selectedFile) return;
+    if (!selectedFile.type.includes("image")) {
+      alert("Please upload an image");
+      return;
+    }
+
+    reader.onload = async () => {
+      const result = reader.result as string;
+
+      const response = await uploadImage(result);
+      const data = await response?.json();
+      data && setBannerImage(data?.url);
+    };
+    reader.onerror = (errorEvent) => {
+      console.error("Error reading file:", errorEvent);
+    };
+
+    reader.readAsDataURL(selectedFile);
+  };
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`/api/auth/update-profile/${params.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          bio: bio || session?.bio,
+          tags: tags || session?.tags,
+          bannerImage: bannerImage || session?.bannerImage,
+          image: image || session?.image,
+        }),
+      });
+      console.log(response);
+      if (response.ok) {
+        router.push("/feed");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    handleSession();
+  }, []);
   return (
     <section className='bg-background  mx-auto  h-full sm:h-screen w-1/2  '>
       <div className='w-full px-12 pt-10'>
-        <form onSubmit={() => {}}>
+        <form onSubmit={handleSubmit}>
           <h3 className="font-['Dancing_Script'] font-black text-4xl text-center mb-10">
             Code Canvas
           </h3>
@@ -73,12 +142,22 @@ const UpdateProfile = () => {
                 }
               }}
             >
-              <Image
-                src={preview ? preview : "/user.svg"}
-                alt='profile'
-                fill
-                className='object-contain '
-              />
+              {/* FIXME:Show default image */}
+              {session?.image ? (
+                <Image
+                  src={session?.image}
+                  alt='profile'
+                  fill
+                  className='object-contain '
+                />
+              ) : (
+                <Image
+                  src={preview ? preview : "/user.svg"}
+                  alt='profile'
+                  fill
+                  className='object-contain '
+                />
+              )}
               <input
                 type='file'
                 ref={fileRef}
@@ -92,12 +171,18 @@ const UpdateProfile = () => {
           </h2>
           <div className='flex items-center my-4 gap-2'>
             <p className='text-md font-medium '>Upload a banner image:</p>
-            <input type='file' name='profile-pic' id='' />
+            <input
+              type='file'
+              name='profile-pic'
+              id=''
+              onChange={handleBannerImageUpload}
+            />
           </div>
           <div className='w-full h-full'>
             <CustomInput
               styles='bg-transparent  h-12 border-gray-300 rounded-sm'
               type='bio'
+              value={session?.bio}
               isPassword={false}
               setValue={setBio}
             />
@@ -136,14 +221,13 @@ const UpdateProfile = () => {
                 placeholder='Enter your interests (e.g javascript,html)'
               />{" "}
             </div>
-            <p className='text-xs text-end text-gray-600'>Forgot password?</p>
 
             <CustomButton
               text='Update Profile'
               isLoading={isLoading}
               handleClick={() => {}}
               btnType='submit'
-              styles='bg-blue-500 text-white'
+              styles='w-full rounded-md bg-blue-500 text-white'
             />
           </div>
         </form>

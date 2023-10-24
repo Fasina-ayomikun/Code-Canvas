@@ -7,6 +7,7 @@ type CustomInputProps = {
   setValue: React.Dispatch<React.SetStateAction<string>>;
   setShowPassword?: React.Dispatch<React.SetStateAction<boolean>>;
   styles?: string;
+  value?: string;
   showIcon?: boolean;
 };
 
@@ -15,6 +16,7 @@ const CustomInput = ({
   styles,
   isPassword,
   showPassword,
+  value,
   setShowPassword,
   setValue,
   showIcon,
@@ -35,7 +37,7 @@ const CustomInput = ({
       <input
         type={isPassword ? (showPassword ? "text" : "password") : "text"}
         name={type}
-        id=''
+        value={value}
         onChange={(e) => setValue && setValue(e.target.value)}
         className={`text-sm  w-full focus:outline-none h-full 
 border-0 px-3 py-1 bg-transparent`}
