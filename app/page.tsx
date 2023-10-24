@@ -29,7 +29,13 @@ const Home = () => {
         callbackUrl: "/feed",
         email,
         password,
+        redirect: false
       });
+
+      if (response?.error) {
+        return toast.error(response.error);
+      }
+      router.replace("/feed");
 
       console.log(response);
     } catch (error) {
