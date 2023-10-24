@@ -25,29 +25,13 @@ const Home = () => {
         return toast.error("All credentials are required");
       }
 
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
+      const response = await signIn("credentials", {
+        callbackUrl: "/feed",
+        email,
+        password,
       });
 
-      const json = await response.json();
-
-      if (!response.ok) {
-        console.log(json)
-        toast.error(json);
-      }
-
-      if (response.ok) {
-        await signIn("credentials", {
-          callbackUrl: "/feed",
-          email,
-        });
-        toast.success("Success!");
-        router.push("/feed");
-      }
+      console.log(response);
     } catch (error) {
       console.log(error);
       toast.error((error as Error).message);

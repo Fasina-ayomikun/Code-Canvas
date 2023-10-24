@@ -26,12 +26,25 @@ export const authOptions = {
       name: "Credentials",
       credentials: {
         email: {},
+        password: {},
       },
 
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
         await connectToDB();
         const user = await User.findOne({ email: credentials?.email });
+
+        if (!user.loggedInWithPassword) {
+          return null;
+        } else {
+          const comparePassword = await bcrypt.compare(
+            credentials?.password || "",
+            user.password
+          );
+          if (!comparePassword) {
+            return null;
+          }
+        }
 
         if (user) {
           // Any object returned will be saved in `user` property of the JWT

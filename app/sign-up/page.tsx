@@ -11,6 +11,7 @@ import { signIn } from "next-auth/react";
 import convertToBase64 from "@/utils/convertToBase64";
 
 const SignUp = () => {
+  //FIXME: Refactor code into one useState instead of six
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,12 +33,12 @@ const SignUp = () => {
 
     try {
       const file = e.target.files[0];
-      const base64 = await convertToBase64(file) as string;
+      const base64 = (await convertToBase64(file)) as string;
       setImage(base64);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -64,7 +65,7 @@ const SignUp = () => {
           username: username,
           password: password,
           loggedInWithPassword: true,
-          image
+          image,
         }),
       });
 
@@ -72,10 +73,8 @@ const SignUp = () => {
 
       if (response.ok) {
         router.push("/");
-      }
-
-      if (!response.ok) {
-        console.log(json)
+      } else {
+        console.log(json);
         toast.error(json);
       }
     } catch (error) {
@@ -120,33 +119,35 @@ const SignUp = () => {
               setShowPassword={setShowPassword}
             />
 
-            <div className="mb-2">
-              <label htmlFor="file" className="flex items-center justify-center gap-2 cursor-pointer">
+            <div className='mb-2'>
+              <label
+                htmlFor='file'
+                className='flex items-center justify-center gap-2 cursor-pointer'
+              >
                 <Image
-                  src="/addAvatar.png" 
-                  alt="Add avatar"
+                  src='/addAvatar.png'
+                  alt='Add avatar'
                   width={30}
                   height={30}
                 />
                 <p>Add an avatar (optional)</p>
               </label>
-              <input 
-                className="hidden"
-                type="file" id="file" 
-                accept="image/*" 
+              <input
+                className='hidden'
+                type='file'
+                id='file'
+                accept='image/*'
                 onChange={(e) => handleChange(e)}
               />
 
-              {
-                image && (
-                  <div className="flex justify-center items-center m-2">
-                    <p className="flex items-center gap-3">
-                      <span className="text-sm">Preview:</span>
-                      <Image src={image} alt="image" width={60} height={60} />
-                    </p>
-                  </div>
-                )
-              }
+              {image && (
+                <div className='flex justify-center items-center m-2'>
+                  <p className='flex items-center gap-3'>
+                    <span className='text-sm'>Preview:</span>
+                    <Image src={image} alt='image' width={60} height={60} />
+                  </p>
+                </div>
+              )}
             </div>
 
             <p className='text-xs text-end text-gray-600'>Forgot password?</p>

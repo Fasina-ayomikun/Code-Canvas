@@ -11,13 +11,20 @@ export const POST = async (req: Request, res: Response) => {
     await connectToDB();
 
     if (!email || !password) {
-      return NextResponse.json("Please provide all credentials", { status: 400 });
+      return NextResponse.json("Please provide all credentials", {
+        status: 400,
+      });
     }
     const userExists = await User.findOne({ email });
     if (!userExists) {
       return NextResponse.json("User not registered", { status: 403 });
     }
-    if (userExists?.loggedInWithPassword) {
+    if (!userExists.loggedInWithPassword) {
+      return NextResponse.json(
+        "Seems this user registered using google or github, kindly login using the same method",
+        { status: 400 }
+      );
+    } else {
       const comparePassword = await bcrypt.compare(
         password,
         userExists.password
@@ -25,12 +32,8 @@ export const POST = async (req: Request, res: Response) => {
       if (!comparePassword) {
         return NextResponse.json("Incorrect Password", { status: 400 });
       }
-    } else {
-      return NextResponse.json(
-        "Seems this user registered using google or github, kindly login using the same method",
-        { status: 400 }
-      );
     }
+
     const cookieStore = cookies();
     const token = cookieStore.get("token");
     let verifiedUser = {};
