@@ -8,6 +8,7 @@ import CustomInput from "@/components/CustomInput";
 import CustomButton from "@/components/CustomButton";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import convertToBase64 from "@/utils/convertToBase64";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +16,7 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
+  const [image, setImage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   function isValidEmail(email: string) {
@@ -22,9 +24,21 @@ const SignUp = () => {
     return regrex.test(email);
   }
   const router = useRouter();
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) {
+      return;
+    }
+
+    const file = e.target.files[0];
+    const base64 = await convertToBase64(file) as string;
+    setImage(base64)
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+
     try {
       if (!email && !fullName && !password && !username) {
         return toast.error("All credentials are required");
@@ -46,6 +60,7 @@ const SignUp = () => {
           username: username,
           password: password,
           loggedInWithPassword: true,
+          image
         }),
       });
 
@@ -57,9 +72,10 @@ const SignUp = () => {
 
       if (!response.ok) {
         console.log(json)
+        toast.error(json);
       }
     } catch (error) {
-      toast.error("User already exist");
+      toast.error((error as Error).message);
       console.log(error);
     } finally {
       setIsLoading(false);
@@ -99,6 +115,36 @@ const SignUp = () => {
               setValue={setPassword}
               setShowPassword={setShowPassword}
             />
+
+            <div className="mb-2">
+              <label htmlFor="file" className="flex items-center justify-center gap-2 cursor-pointer">
+                <Image
+                  src="/addAvatar.png" 
+                  alt="Add avatar"
+                  width={30}
+                  height={30}
+                />
+                <p>Add an avatar (optional)</p>
+              </label>
+              <input 
+                className="hidden"
+                type="file" id="file" 
+                accept="image/*" 
+                onChange={(e) => handleChange(e)}
+              />
+
+              {
+                image && (
+                  <div className="flex justify-center items-center m-2">
+                    <p className="flex items-center gap-3">
+                      <span className="text-sm">Preview:</span>
+                      <Image src={image} alt="image" width={60} height={60} />
+                    </p>
+                  </div>
+                )
+              }
+            </div>
+
             <p className='text-xs text-end text-gray-600'>Forgot password?</p>
 
             <CustomButton

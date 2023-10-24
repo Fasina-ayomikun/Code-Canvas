@@ -33,7 +33,12 @@ const Home = () => {
         }),
       });
 
-      await response.json();
+      const json = await response.json();
+
+      if (!response.ok) {
+        console.log(json)
+        toast.error(json);
+      }
 
       if (response.ok) {
         await signIn("credentials", {
@@ -45,7 +50,7 @@ const Home = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Invalid email or password");
+      toast.error((error as Error).message);
     } finally {
       setIsLoading(false);
     }

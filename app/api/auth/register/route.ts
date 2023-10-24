@@ -6,20 +6,20 @@ import { serialize } from "cookie";
 import { NextResponse } from "next/server";
 
 export const POST = async (req: Request, res: Response) => {
-  const { name, username, loggedInWithPassword, email, password } =
+  const { name, username, loggedInWithPassword, email, password, image } =
     await req.json();
   try {
     await connectToDB();
     console.log(loggedInWithPassword);
     if (!name || !username || !email) {
-      return new Response("Please provide all credentials", { status: 400 });
+      return NextResponse.json("Please provide all credentials", { status: 400 });
     }
     if (loggedInWithPassword && !password) {
-      return new Response("Please provide a password", { status: 400 });
+      return NextResponse.json("Please provide a password", { status: 400 });
     }
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return new Response("User already exists", { status: 400 });
+      return NextResponse.json("User already exists", { status: 400 });
     }
     let hashedPassword = "";
     if (password && loggedInWithPassword) {
@@ -42,6 +42,7 @@ export const POST = async (req: Request, res: Response) => {
         username,
         password: hashedPassword,
         loggedInWithPassword,
+        image
       });
     } else {
       await User.create({ name, email, username, loggedInWithPassword });
@@ -54,6 +55,5 @@ export const POST = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log(error);
-    return new Response("Failed to create user", { status: 500 });
   }
 };

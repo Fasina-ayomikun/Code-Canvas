@@ -36,7 +36,6 @@ const CustomInput = ({
         type={isPassword ? (showPassword ? "text" : "password") : "text"}
         name={type}
         id=''
-        required
         onChange={(e) => setValue && setValue(e.target.value)}
         className={`text-sm  w-full focus:outline-none h-full 
 border-0 px-3 py-1 bg-transparent`}
