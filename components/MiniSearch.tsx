@@ -5,19 +5,9 @@ import Image from "next/image";
 import { SessionType } from "@/common.types";
 import { getSession } from "next-auth/react";
 
-const MiniSearch = () => {
+const MiniSearch = ({ session }: { session: SessionType | null }) => {
   const [text, setText] = useState("");
-  const [session, setSession] = useState<SessionType | null>(null);
-  const handleSession = async () => {
-    const session = await getSession();
 
-    if (session) {
-      setSession(session);
-    }
-  };
-  useEffect(() => {
-    handleSession();
-  }, []);
   return (
     <section className='flex items-center gap-5 px-5 box_shadow2  w-full mx-auto my-10 py-2 bg-white'>
       {session?.image && (

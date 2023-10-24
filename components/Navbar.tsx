@@ -9,6 +9,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import { SessionType } from "@/common.types";
 import { useRouter } from "next/navigation";
+import CustomButton from "./CustomButton";
 
 const Navbar = ({
   setOpenModal,
@@ -37,8 +38,7 @@ const Navbar = ({
     {
       title: "Sign Out",
       handleClick: () => {
-        signOut({ callbackUrl: "/" });
-        router.push("/");
+        signOut({ callbackUrl: "http://localhost:3000" });
       },
     },
   ];
@@ -125,25 +125,33 @@ const Navbar = ({
             );
           })}
         </div>
-        <div className='relative sm:col-span-2 flex items-center gap-2 '>
-          {session?.image && (
-            <Image
-              src={session?.image}
-              alt='profile'
-              width={40}
-              height={40}
-              onClick={() => setIsDropDownOpen((prev) => !prev)}
-              className=' aspect-square object-fill rounded-full min-w-min'
+        {session ? (
+          <div className='relative sm:col-span-2 flex items-center gap-2 '>
+            {session?.image && (
+              <Image
+                src={session?.image}
+                alt='profile'
+                width={40}
+                height={40}
+                onClick={() => setIsDropDownOpen((prev) => !prev)}
+                className=' aspect-square object-fill rounded-full min-w-min'
+              />
+            )}
+            <p className='font-bold text-dark-gray hidden sm:block text-xs'>
+              {session?.name}
+            </p>
+            <Toggle
+              isDropDownOpen={isDropDownOpen}
+              dropDownContent={dropDownContent}
             />
-          )}
-          <p className='font-bold text-dark-gray hidden sm:block text-xs'>
-            {session?.name}
-          </p>
-          <Toggle
-            isDropDownOpen={isDropDownOpen}
-            dropDownContent={dropDownContent}
+          </div>
+        ) : (
+          <CustomButton
+            text='Log In'
+            styles='bg-transparent  text-link-blue mt-0  duration-300 ease-in underline hover:text-dark-gray'
+            handleClick={() => router.push("/")}
           />
-        </div>
+        )}
       </div>
     </nav>
   );

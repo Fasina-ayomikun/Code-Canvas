@@ -4,18 +4,7 @@ import { getSession } from "next-auth/react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
-const MiniProfileCard = () => {
-  const [session, setSession] = useState<SessionType | null>(null);
-  const handleSession = async () => {
-    const session = await getSession();
-    if (session) {
-      setSession(session);
-    }
-    console.log(session);
-  };
-  useEffect(() => {
-    handleSession();
-  }, []);
+const MiniProfileCard = ({ session }: { session: SessionType | null }) => {
   return (
     <section className='hidden lg:block box_shadow2  w-4/5 mx-auto my-10 bg-white'>
       <div className='relative w-full h-32 '>
