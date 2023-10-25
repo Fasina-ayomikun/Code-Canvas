@@ -71,7 +71,7 @@ const SignUp = () => {
           username: username,
           password: password,
           loggedInWithPassword: true,
-          image,
+          image: image === "" ? "/avatar.png" : image,
         }),
       });
 

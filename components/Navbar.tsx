@@ -29,9 +29,9 @@ const Navbar = ({
       },
     },
     {
-      title: "Update Profile",
+      title: "Profile",
       handleClick: () => {
-        router.push(`/update-profile/${session?.id}`);
+        router.push(`/profile/${session?.id}`);
       },
     },
     {
@@ -125,7 +125,7 @@ const Navbar = ({
             );
           })}
         </div>
-        <div className='relative sm:col-span-2 flex items-center gap-2 '>
+        <div className='relative sm:col-span-2 flex items-center gap-2 cursor-pointer'>
           {session?.image && (
             <Image
               src={session?.image}
