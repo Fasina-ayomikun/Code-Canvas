@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import Header from '@/components/profile/Header';
 import About from '@/components/profile/About';
@@ -17,7 +18,15 @@ function Profile() {
                 
                 <div className='col-span-2'>
                     <h2 className='font-bold text-2xl text-center'>Posts</h2>
-                    <Posts />
+                    <Posts 
+                        fetchPosts={() => {}} 
+                        isEditing
+                        isLoading
+                        posts={[]}
+                        setIsEditing={() => {}}
+                        setOpenModal={() => {}}
+                        setPostToEdit={() => {}}
+                    />
                 </div>
             </div>
         </div>
