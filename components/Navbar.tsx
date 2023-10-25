@@ -30,9 +30,9 @@ const Navbar = ({
       },
     },
     {
-      title: "Update Profile",
+      title: "Profile",
       handleClick: () => {
-        router.push(`/update-profile/${session?.id}`);
+        router.push(`/profile/2`);
       },
     },
     {

@@ -8,6 +8,7 @@ import { uploadImage } from "../../lib/actions";
 import { useRouter } from "next/navigation";
 import { SessionType } from "@/common.types";
 import { getSession } from "next-auth/react";
+import { BsFillCameraFill } from "react-icons/all";
 
 const UpdateProfile = ({ params }: { params: { id: string } }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +20,6 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
   const [bannerImage, setBannerImage] = useState("");
   const [preview, setPreview] = useState("");
   const [session, setSession] = useState<SessionType | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   const handleSession = async () => {
@@ -135,49 +135,63 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
           </h3>
           <div className='mx-auto aspect-square w-32 rounded-full bg-gray-200  flex  items-center justify-center'>
             <div
-              className='relative w-24  aspect-square '
-              onClick={() => {
-                if (fileRef) {
-                  fileRef?.current?.click();
-                }
-              }}
-            >
+              className='relative w-24  aspect-square cursor-pointer'>
+                <p className="absolute -left-4 z-50">
+                  <BsFillCameraFill size={24} />
+                </p>
               {/* FIXME:Show default image */}
-              {session?.image ? (
-                <Image
-                  src={session?.image}
-                  alt='profile'
-                  fill
-                  className='object-contain '
-                />
-              ) : (
-                <Image
-                  src={preview ? preview : "/user.svg"}
-                  alt='profile'
-                  fill
-                  className='object-contain '
-                />
-              )}
+              <label htmlFor="file" className="cursor-pointer">
+                {session?.image ? (
+                  <Image
+                    src={session?.image}
+                    alt='profile'
+                    fill
+                    className='object-contain '
+                  />
+                ) : (
+                  <Image
+                    src={preview ? preview : "/user.svg"}
+                    alt='profile'
+                    fill
+                    className='object-contain '
+                  />
+                )}
+              </label>
               <input
                 type='file'
-                ref={fileRef}
+                id="file"
                 onChange={handleFileUpload}
                 className='hidden'
+                accept="image/*"
               />
             </div>
           </div>
           <h2 className='text-center font-semibold my-5 text-lg'>
-            Profile Picture
+            Add Profile Picture
           </h2>
-          <div className='flex items-center my-4 gap-2'>
-            <p className='text-md font-medium '>Upload a banner image:</p>
+
+          <div className='mb-2'>
+            <label
+              htmlFor='banner-file'
+              className='flex items-center justify-center gap-2 cursor-pointer'
+            >
+              <Image
+                src='/addAvatar.png'
+                alt='Add avatar'
+                width={30}
+                height={30}
+              />
+              <p>Upload a banner image</p>
+            </label>
             <input
+              className='hidden'
               type='file'
-              name='profile-pic'
-              id=''
+              id='banner-file'
               onChange={handleBannerImageUpload}
+              accept='image/*'
             />
           </div>
+
           <div className='w-full h-full'>
             <CustomInput
               styles='bg-transparent  h-12 border-gray-300 rounded-sm'

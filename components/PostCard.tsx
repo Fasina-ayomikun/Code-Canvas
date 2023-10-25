@@ -1,7 +1,7 @@
 "use client";
 import { PostCardProps, PostProps } from "@/common.types";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Toggle from "./Toggle";
 import moment from "moment";
 type userProp = {};
@@ -47,8 +47,25 @@ const PostCard = ({
       },
     },
   ];
+
+  // the drop down should disappear when user clicks outside the modal
+  useEffect(() => {
+
+    const disableDropdown = (e: Event) => {
+      if (!(e.target as HTMLElement).classList.contains("drop-down")) {
+        setIsDropDownOpen(false);
+      }
+    }
+
+    document.addEventListener("click", disableDropdown);
+
+    return () => {
+      document.removeEventListener("click", disableDropdown);
+    }
+  }, [])
+
   return (
-    <div className='px-5 box_shadow2  w-full mx-auto my-10 py-3 bg-white'>
+    <div className='px-5 box_shadow2  w-full mx-auto my-10 py-3 rounded-md bg-white'>
       <div className='flex items-center gap-2  justify-between'>
         <div className='flex px-4 items-start gap-2 py-3 '>
           <Image
@@ -70,13 +87,13 @@ const PostCard = ({
         </div>
         <div className='relative'>
           <div
-            className=''
+            className='drop-down cursor-pointer'
             id='dropdown-button'
             onClick={() => setIsDropDownOpen((prev) => !prev)}
           >
-            <div className='h-[1px] rounded-full bg-dark-gray w-4 hover:bg-link-blue my-1'></div>
-            <div className='h-[1px] rounded-full bg-dark-gray w-4 hover:bg-link-blue hover:duration-200 hover:skew-x-2 my-1'></div>
-            <div className='h-[1px] rounded-full bg-dark-gray w-4 hover:bg-link-blue hover:duration-200 hover:skew-x-2 my-1'></div>
+            <div className='h-[1px] drop-down rounded-full bg-dark-gray w-4 hover:bg-link-blue my-1'></div>
+            <div className='h-[1px] drop-down rounded-full bg-dark-gray w-4 hover:bg-link-blue hover:duration-200 hover:skew-x-2 my-1'></div>
+            <div className='h-[1px] drop-down rounded-full bg-dark-gray w-4 hover:bg-link-blue hover:duration-200 hover:skew-x-2 my-1'></div>
           </div>
           <Toggle
             isDropDownOpen={isDropDownOpen}
