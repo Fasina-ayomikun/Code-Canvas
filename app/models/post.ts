@@ -17,6 +17,14 @@ const PostSchema = new mongoose.Schema(
       required: true,
       ref: "User",
     },
+    comments: {
+      type: Array,
+      default: [],
+    },
+    noOfLikes: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

@@ -67,6 +67,7 @@ const Feed = () => {
         <div className='col-span-6 mx-auto px-10 sm:px-20  lg:px-3 w-full'>
           <MiniSearch session={session} />
           <Posts
+            session={session}
             setIsEditing={setIsEditing}
             isEditing={isEditing}
             isLoading={isLoading}

@@ -8,7 +8,7 @@ import { uploadImage } from "../../lib/actions";
 import { useRouter } from "next/navigation";
 import { SessionType } from "@/common.types";
 import { getSession } from "next-auth/react";
-import { BsFillCameraFill } from "react-icons/all";
+import { BsFillCameraFill } from "react-icons/bs";
 
 const UpdateProfile = ({ params }: { params: { id: string } }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -134,13 +134,12 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
             Code Canvas
           </h3>
           <div className='mx-auto aspect-square w-32 rounded-full bg-gray-200  flex  items-center justify-center'>
-            <div
-              className='relative w-24  aspect-square cursor-pointer'>
-                <p className="absolute -left-4 z-50">
-                  <BsFillCameraFill size={24} />
-                </p>
+            <div className='relative w-24  aspect-square cursor-pointer'>
+              <p className='absolute -left-4 z-50'>
+                <BsFillCameraFill size={24} />
+              </p>
               {/* FIXME:Show default image */}
-              <label htmlFor="file" className="cursor-pointer">
+              <label htmlFor='file' className='cursor-pointer'>
                 {session?.image ? (
                   <Image
                     src={session?.image}
@@ -159,10 +158,10 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
               </label>
               <input
                 type='file'
-                id="file"
+                id='file'
                 onChange={handleFileUpload}
                 className='hidden'
-                accept="image/*"
+                accept='image/*'
               />
             </div>
           </div>
@@ -241,7 +240,7 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
               isLoading={isLoading}
               handleClick={() => {}}
               btnType='submit'
-              styles='w-full rounded-md bg-blue-500 text-white'
+              styles='w-full mt-5 rounded-md bg-blue-500 text-white'
             />
           </div>
         </form>

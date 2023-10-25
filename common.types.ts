@@ -11,7 +11,7 @@ export type PostProps = {
   updatedAt: string;
   desc: string;
   image: string;
-  noOfComments: number;
+  comments: CommentProp[];
   noOfLikes: number;
   tags: string[];
 };
@@ -28,11 +28,21 @@ export type SessionType = {
 };
 export type PostCardProps = {
   key: number;
-  post: PostProps;
+  postId: string;
+  session: SessionType | null;
   fetchPosts: () => void;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 
   setPostToEdit: React.Dispatch<React.SetStateAction<PostProps | null>>;
 
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+};
+export type CommentProp = {
+  creator: {
+    image: string | null | undefined;
+    name: string | null | undefined;
+    username: string | null | undefined;
+  };
+  desc: string;
+  createdAt: string;
 };

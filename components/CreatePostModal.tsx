@@ -61,11 +61,12 @@ const CreatePostModal = ({
     e.preventDefault();
     setIsLoading(true);
     try {
-      const imageUrl = await uploadImage(preview);
-      const data = await imageUrl?.json();
-      console.log(data);
-
-      // handleStateChange("image", data?.url);
+      let data;
+      if (preview) {
+        const imageUrl = await uploadImage(preview);
+        data = await imageUrl?.json();
+        console.log(data);
+      }
 
       if (postToEdit) {
         const response = await fetch(`/api/create-post/${postToEdit?._id}`, {
