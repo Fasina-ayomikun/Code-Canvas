@@ -13,13 +13,15 @@ import CustomButton from "./CustomButton";
 
 const Navbar = ({
   setOpenModal,
+  session
 }: {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  session: SessionType | null
 }) => {
   const [searchText, setSearchText] = useState("");
   const [isFixed, setIsFixed] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
-  const [session, setSession] = useState<SessionType | null>(null);
+
   const router = useRouter();
   //TODO:Put ina separate file
   const dropDownContent = [
@@ -32,7 +34,7 @@ const Navbar = ({
     {
       title: "Profile",
       handleClick: () => {
-        router.push(`/profile/2`);
+        router.push(`/profile/${session?.username}`);
       },
     },
     {
@@ -42,13 +44,7 @@ const Navbar = ({
       },
     },
   ];
-  const handleSession = async () => {
-    const session = await getSession();
 
-    if (session) {
-      setSession(session);
-    }
-  };
   //TODO:Put in another fil
 
   const navLinks = [
@@ -70,7 +66,6 @@ const Navbar = ({
   ];
 
   useEffect(() => {
-    handleSession();
     const handleScroll = () => {
       if (window.scrollY > 100) {
         setIsFixed(true);

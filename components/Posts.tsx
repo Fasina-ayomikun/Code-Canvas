@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import PostCard from "./PostCard";
 import { PostProps, SessionType } from "@/common.types";
+import MiniLoader from "./loader/MiniLoader";
 const Posts = ({
   setOpenModal,
   setPostToEdit,
@@ -23,11 +24,15 @@ const Posts = ({
 }) => {
   if (isLoading) {
     //TODO:Add Custom loading
-    return <div>Loading...</div>;
+    return <MiniLoader width="30" />;
   }
+
   return (
     <section>
-      {posts?.map((post, index) => {
+      {posts?.length === 0 ? (
+        <p className="font-medium text-xl text-center mt-10">No post</p>
+      ) :
+      posts?.map((post, index) => {
         return (
           <PostCard
             fetchPosts={fetchPosts}
