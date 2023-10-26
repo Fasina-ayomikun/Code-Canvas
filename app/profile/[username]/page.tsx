@@ -1,18 +1,20 @@
 "use client";
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import Header from '@/components/profile/Header';
 import About from '@/components/profile/About';
 import Followers from '@/components/profile/Followers';
 import Posts from '@/components/Posts';
-import { useSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import useAuth from '@/hooks/useAuth';
 import { setIsLoggedInUser, setSessionUserDetails } from '@/redux/slices/profile';
 import { useDispatch, useSelector } from 'react-redux';
 import usePost from '@/hooks/usePost';
+import { SessionType } from '@/common.types';
 
 function Profile({ params }:{ params: { username: string} }) {
 
     const { data, status} = useSession();
+    const [session, setSession] = useState<SessionType>(null!);
     const { getUserDetails } = useAuth();
     const { fetchUserPost } = usePost();
     const dispatch = useDispatch();
@@ -39,6 +41,13 @@ function Profile({ params }:{ params: { username: string} }) {
 
     useEffect(() => {
         getUserDetails({ username: params.username });
+
+        (async () => {
+            const data = await getSession();
+            if (data) {
+                setSession(data);
+            }
+        })();
     }, []);
 
     return (
@@ -61,6 +70,7 @@ function Profile({ params }:{ params: { username: string} }) {
                         setIsEditing={() => {}}
                         setOpenModal={() => {}}
                         setPostToEdit={() => {}}
+                        session={session}
                     />
                 </div>
             </div>

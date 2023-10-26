@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import PostCard from "./PostCard";
-import { PostProps } from "@/common.types";
+import { PostProps, SessionType } from "@/common.types";
 const Posts = ({
   setOpenModal,
   setPostToEdit,
@@ -10,12 +10,14 @@ const Posts = ({
   isLoading,
   fetchPosts,
   posts,
+  session,
 }: {
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   fetchPosts: () => void;
   isLoading: boolean;
   posts: PostProps[];
   isEditing: boolean;
+  session: SessionType | null;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setPostToEdit: React.Dispatch<React.SetStateAction<PostProps | null>>;
 }) => {
@@ -32,7 +34,8 @@ const Posts = ({
             setOpenModal={setOpenModal}
             setPostToEdit={setPostToEdit}
             key={index}
-            post={post}
+            postId={post?._id}
+            session={session}
             setIsEditing={setIsEditing}
           />
         );

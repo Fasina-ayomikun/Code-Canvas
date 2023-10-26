@@ -12,7 +12,7 @@ export default () => {
         dispatch(toggleIsLoading());
         console.log("fetching ==================")
         try {
-            const response = await axios().get(`/create-post/${userId}`);
+            const response = await axios().get(`/create-post/user/${userId}`);
             console.log(response);
             dispatch(setPosts(response.data));
         } catch (error) {

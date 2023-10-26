@@ -21,7 +21,7 @@ const CustomButton = ({
       type={btnType || "button"}
       onClick={handleClick}
       disabled={isLoading}
-      className={`flex items-center justify-center   mt-5 py-2 ${styles}`}
+      className={`flex items-center justify-center    py-2 ${styles}`}
     >
       {iconSrc && <Image src={iconSrc} alt={text} width={20} height={20} />}
       {isLoading ? "Submitting..." : text}{" "}

@@ -39,7 +39,6 @@ const CreatePostModal = ({
     setForm((prev) => {
       return { ...prev, [name]: value };
     });
-    console.log(form);
   };
   const handleTags = (tagList: string) => {
     const value = tagList.split("#");
@@ -54,11 +53,6 @@ const CreatePostModal = ({
       const file = e.target.files[0];
       const base64 = (await convertToBase64(file)) as string;
       setPreview(base64);
-      const imageUrl = await uploadImage(base64);
-      const data = await imageUrl?.json();
-      console.log(data);
-
-      imageUrl && handleStateChange("image", data?.url);
     } catch (error) {
       console.log(error);
     }
@@ -67,11 +61,17 @@ const CreatePostModal = ({
     e.preventDefault();
     setIsLoading(true);
     try {
-      // if (!form.image) return;
+      let data;
+      if (preview) {
+        const imageUrl = await uploadImage(preview);
+        data = await imageUrl?.json();
+        console.log(data);
+      }
+
       if (postToEdit) {
         const response = await fetch(`/api/create-post/${postToEdit?._id}`, {
           method: "PATCH",
-          body: JSON.stringify(form),
+          body: JSON.stringify({ ...form, image: data?.url }),
         });
         if (response.ok) {
           console.log("okay updated");
@@ -80,14 +80,18 @@ const CreatePostModal = ({
           setForm({ desc: "", tags: [], image: "" });
           setPreview("");
           setIsEditing(false);
+          setPostToEdit(null);
         }
       } else {
         const response = await fetch("/api/create-post/new", {
           method: "POST",
-          body: JSON.stringify({ ...form, user: session?.id }),
+          body: JSON.stringify({
+            ...form,
+            user: session?.id,
+            image: data?.url,
+          }),
         });
         if (response.ok) {
-          console.log("okay created");
           fetchPosts();
           setOpenModal(false);
           setForm({ desc: "", tags: [], image: "" });
@@ -111,7 +115,7 @@ const CreatePostModal = ({
   }, []);
   return (
     <section className=' fixed top-0 right-0 h-full py-6 bg-black/60 flex items-center  w-screen z-40 '>
-      <div className='mx-auto w-5/6 md:w-2/3 lg:w-1/2 h-screen over overflow-y-scroll py-3 px-4 bg-white  rounded-md '>
+      <div className='mx-auto w-5/6 md:w-2/3 lg:w-1/2 h-[500px]  overflow-y-scroll py-3 px-4 bg-white  rounded-md '>
         <div className='flex items-center px-3 gap-3 justify-between'>
           <div className='flex px-4 items-start gap-2 py-3 '>
             {session?.image && (
