@@ -1,5 +1,5 @@
 import axios from "@/config/axios";
-import { toggleIsLoading } from "@/redux/slices/loading";
+import { toggleIsUserPostLoading } from "@/redux/slices/loading";
 import { setPosts } from "@/redux/slices/post";
 import { useDispatch } from "react-redux";
 
@@ -9,7 +9,7 @@ export default () => {
     const dispatch = useDispatch()
 
     const fetchUserPost = async ({ userId }: { userId: string }) => {
-        dispatch(toggleIsLoading());
+        dispatch(toggleIsUserPostLoading());
         console.log("fetching ==================")
         try {
             const response = await axios().get(`/create-post/user/${userId}`);
@@ -18,7 +18,7 @@ export default () => {
         } catch (error) {
             console.log(error);
         } finally {
-            dispatch(toggleIsLoading());
+            dispatch(toggleIsUserPostLoading());
         }
     }
 

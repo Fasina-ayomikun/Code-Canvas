@@ -1,35 +1,31 @@
 "use client";
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import Header from '@/components/profile/Header';
 import About from '@/components/profile/About';
 import Followers from '@/components/profile/Followers';
 import Posts from '@/components/Posts';
-import { getSession, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import useAuth from '@/hooks/useAuth';
 import { setIsLoggedInUser, setSessionUserDetails } from '@/redux/slices/profile';
 import { useDispatch, useSelector } from 'react-redux';
 import usePost from '@/hooks/usePost';
-import { SessionType } from '@/common.types';
+import PageLoader from '@/components/loader/PageLoader';
 
 function Profile({ params }:{ params: { username: string} }) {
 
     const { data, status} = useSession();
-    const [session, setSession] = useState<SessionType>(null!);
     const { getUserDetails } = useAuth();
     const { fetchUserPost } = usePost();
     const dispatch = useDispatch();
     const { userDetails } = useSelector((state: any) => state.profile);
     const { posts } = useSelector((state: any) => state.post);
-    const { isLoading } = useSelector((state: any) => state.loading);
-
-    console.log(posts)
+    const { isLoading, isFetchingUserDetails } = useSelector((state: any) => state.loading);
 
     useLayoutEffect(() => {
-        console.log(status);
         if (status === "loading") return;
         dispatch(setSessionUserDetails(data));
 
-        if (data && ((data as any)?.id === userDetails._id)) {
+        if ((data as any)?.id === userDetails._id) {
             dispatch(setIsLoggedInUser(true));
         }
     }, [data, status, userDetails])
@@ -37,18 +33,15 @@ function Profile({ params }:{ params: { username: string} }) {
     useLayoutEffect(() => {
         if (!userDetails._id) return;
         fetchUserPost({ userId: userDetails._id })
-    }, [userDetails._id])
+    }, [userDetails._id]);
 
     useEffect(() => {
         getUserDetails({ username: params.username });
-
-        (async () => {
-            const data = await getSession();
-            if (data) {
-                setSession(data);
-            }
-        })();
     }, []);
+
+    if (isFetchingUserDetails || status === "loading") {
+        return <PageLoader />
+    }
 
     return (
         <div className='bg-background_color min-h-screen'>
@@ -70,7 +63,7 @@ function Profile({ params }:{ params: { username: string} }) {
                         setIsEditing={() => {}}
                         setOpenModal={() => {}}
                         setPostToEdit={() => {}}
-                        session={session}
+                        session={data}
                     />
                 </div>
             </div>

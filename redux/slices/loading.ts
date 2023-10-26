@@ -3,15 +3,19 @@ import { createSlice } from "@reduxjs/toolkit";
 const loadingSlice = createSlice({
     name: "loading",
     initialState: {
-        isLoading: false,
+        isUserPostLoading: false,
+        isFetchingUserDetails: false
     },
     reducers: {
-        toggleIsLoading(state) {
-            state.isLoading = !state.isLoading;
+        toggleIsUserPostLoading(state) {
+            state.isUserPostLoading = !state.isUserPostLoading;
+        },
+        toggleIsFetchingUserDetails(state) {
+            state.isFetchingUserDetails = !state.isFetchingUserDetails;
         }
     }
 })
 
-export const { toggleIsLoading } = loadingSlice.actions;
+export const { toggleIsUserPostLoading, toggleIsFetchingUserDetails } = loadingSlice.actions;
 
 export default loadingSlice.reducer;
