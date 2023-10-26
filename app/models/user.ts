@@ -16,13 +16,12 @@ const UserSchema = new mongoose.Schema({
   },
   bio: {
     type: String,
-    default:
-      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore sapiente sequi nesciunt quasi quae. Sint earum eaque quae molestias nobis.",
+    default: "I love tech",
   },
   tags: {
     type: Array,
 
-    default: ["java", "oop"],
+    default: ["professionalGrowth", "tech"],
   },
 
   password: {
@@ -32,6 +31,7 @@ const UserSchema = new mongoose.Schema({
   //   TODO: add profile details after registering
   image: {
     type: String,
+    default: "/avatar.png",
   },
   //TODO:CHANGE Default
   bannerImage: {

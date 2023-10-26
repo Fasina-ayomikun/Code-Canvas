@@ -37,10 +37,6 @@ const SignUp = () => {
       const file = e.target.files[0];
       const base64 = (await convertToBase64(file)) as string;
       setPreview(base64);
-      const imageUrl = await uploadImage(base64);
-      const data = await imageUrl?.json();
-
-      imageUrl && setImage(data?.url);
     } catch (error) {
       console.log(error);
     }
@@ -58,7 +54,11 @@ const SignUp = () => {
       if (!isValidEmail(email)) {
         return toast.error("Provide a valid email");
       }
-      if (preview && !image) return;
+      let data;
+      if (preview) {
+        const imageUrl = await uploadImage(preview);
+        data = await imageUrl?.json();
+      }
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
@@ -71,7 +71,7 @@ const SignUp = () => {
           username: username,
           password: password,
           loggedInWithPassword: true,
-          image: image === "" ? "/avatar.png" : image,
+          image: data?.url,
         }),
       });
 

@@ -13,10 +13,10 @@ import CustomButton from "./CustomButton";
 
 const Navbar = ({
   setOpenModal,
-  session
+  session,
 }: {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  session: SessionType | null
+  session: SessionType | null;
 }) => {
   const [searchText, setSearchText] = useState("");
   const [isFixed, setIsFixed] = useState(false);
@@ -64,7 +64,9 @@ const Navbar = ({
       iconUrl: "/notice.svg",
     },
   ];
-
+  useEffect(() => {
+    console.log(session);
+  }, []);
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 100) {

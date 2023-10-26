@@ -75,6 +75,7 @@ export const authOptions = {
         email: session?.user.email,
       });
       session.user.id = sessionUser?._id.toString();
+      console.log("session", sessionUser);
 
       return {
         ...session.user,
@@ -82,8 +83,8 @@ export const authOptions = {
         username: sessionUser.username,
         bio: sessionUser.bio,
         tags: sessionUser.tags,
-        bannerImage: sessionUser.bannerImage,
-        image: sessionUser.image,
+        bannerImage: sessionUser?.bannerImage,
+        image: session?.user?.image,
       };
     },
     //TODO: When deleting account redirect to login page
@@ -92,9 +93,11 @@ export const authOptions = {
     },
     //TODO:Change type any to other type
     async signIn({ profile }: any) {
-      console.log("profile", profile);
       try {
+        console.log("profile", profile);
+
         await connectToDB();
+
         const userExists = await User.findOne({ email: profile?.email });
         if (!userExists) {
           await User.create({
@@ -102,6 +105,7 @@ export const authOptions = {
             name: profile?.name,
             username: profile?.name.replace(" ", "").toLowerCase(),
             loggedInWithPassword: false,
+            image: profile?.picture,
           });
         }
       } catch (error) {

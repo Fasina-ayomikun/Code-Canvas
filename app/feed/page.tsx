@@ -9,7 +9,7 @@ import PageLoader from "@/components/loader/PageLoader";
 import Posts from "@/components/Posts";
 import RecentNotifications from "@/components/RecentNotifications";
 import SuggestedPeople from "@/components/SuggestedPeople";
-import { useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 
 const Feed = () => {
@@ -19,8 +19,6 @@ const Feed = () => {
   const [session, setSession] = useState<SessionType | null>(null);
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  const { status, data } = useSession();
 
   const fetchPosts = async () => {
     setIsLoading(true);
@@ -36,20 +34,29 @@ const Feed = () => {
     }
   };
 
+  const handleSession = async () => {
+    const data = await getSession();
+    if (data) {
+      console.log(data);
+
+      setSession(data);
+    }
+  };
   useEffect(() => {
-    setSession(data);
+    handleSession();
+    console.log(session);
   }, []);
   useEffect(() => {
     fetchPosts();
   }, [isEditing]);
 
-  if (status === "loading") {
-    return <PageLoader />
+  if (isLoading) {
+    return <PageLoader />;
   }
 
   return (
     <>
-      <Navbar setOpenModal={setOpenModal} session={data} />
+      <Navbar setOpenModal={setOpenModal} session={session} />
       {openModal && (
         <CreatePostModal
           setPostToEdit={setPostToEdit}
@@ -68,7 +75,7 @@ const Feed = () => {
         <div className='col-span-6 mx-auto px-10 sm:px-20  lg:px-3 w-full'>
           <MiniSearch session={session} />
           <Posts
-            session={data}
+            session={session}
             setIsEditing={setIsEditing}
             isEditing={isEditing}
             isLoading={isLoading}

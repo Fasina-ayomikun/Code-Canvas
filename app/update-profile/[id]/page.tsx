@@ -61,9 +61,6 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
       const result = reader.result as string;
 
       setPreview(result);
-      const response = await uploadImage(result);
-      const data = await response?.json();
-      response && setImage(data?.url);
     };
     reader.onerror = (errorEvent) => {
       console.error("Error reading file:", errorEvent);
@@ -88,10 +85,9 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
 
     reader.onload = async () => {
       const result = reader.result as string;
-
-      const response = await uploadImage(result);
-      const data = await response?.json();
-      data && setBannerImage(data?.url);
+      if (result) {
+        setBannerImage(result);
+      }
     };
     reader.onerror = (errorEvent) => {
       console.error("Error reading file:", errorEvent);
@@ -104,13 +100,25 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
     setIsLoading(true);
 
     try {
+      let data;
+      let imageData;
+      if (bannerImage) {
+        const response = await uploadImage(bannerImage);
+        data = await response?.json();
+        console.log("banner", data);
+      }
+      if (preview) {
+        const response = await uploadImage(preview);
+        imageData = await response?.json();
+        console.log("image", imageData);
+      }
       const response = await fetch(`/api/auth/update-profile/${params.id}`, {
         method: "PATCH",
         body: JSON.stringify({
           bio: bio || session?.bio,
           tags: tags || session?.tags,
-          bannerImage: bannerImage || session?.bannerImage,
-          image: image || session?.image,
+          bannerImage: data?.url || session?.bannerImage,
+          image: imageData?.url || session?.image,
         }),
       });
       console.log(response);
