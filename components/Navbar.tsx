@@ -32,7 +32,7 @@ const Navbar = ({
     {
       title: "Profile",
       handleClick: () => {
-        router.push(`/profile/2`);
+        router.push(`/profile/${session?.username}`);
       },
     },
     {

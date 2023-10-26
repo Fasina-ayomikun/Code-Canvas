@@ -67,7 +67,7 @@ const CreatePostModal = ({
     e.preventDefault();
     setIsLoading(true);
     try {
-      if (!form.image) return;
+      // if (!form.image) return;
       if (postToEdit) {
         const response = await fetch(`/api/create-post/${postToEdit?._id}`, {
           method: "PATCH",
