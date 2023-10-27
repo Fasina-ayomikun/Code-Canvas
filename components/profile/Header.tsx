@@ -16,7 +16,7 @@ function Header() {
   useEffect(() => {}, []);
 
   return (
-    <div className='bg-white h-[450px] shadow-md pb-10'>
+    <div className='bg-white h-[480px] shadow-md pb-10'>
       {/* Banner Image Layout */}
       <div className='w-4/5 h-[300px] relative m-auto'>
         <Image
@@ -41,8 +41,11 @@ function Header() {
           />
         </div>
 
-        <div>
-          <h2 className='text-4xl font-bold mb-2'>{userDetails.username}</h2>
+        <div className="ml-3 relative top-5">
+          <div className="mt-20 mb-2">
+            <h2 className='text-4xl font-bold mb-2'>{userDetails.name}</h2>
+            <span className="text-gray-500 text-base font-bold">@{userDetails.username}</span>
+          </div>
           <div className='flex justify-center items-center gap-2'>
             <p className='text-sm text-gray-600 cursor-pointer'>
               4.1k followers
