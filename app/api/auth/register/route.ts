@@ -18,10 +18,16 @@ export const POST = async (req: Request, res: Response) => {
     // if (loggedInWithPassword && !password) {
     //   return NextResponse.json("Please provide a password", { status: 400 });
     // }
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return NextResponse.json("User already exists", { status: 400 });
+    const emailExists = await User.findOne({ email });
+    if (emailExists) {
+      return NextResponse.json("Email address already in use", { status: 400 });
     }
+
+    const usernameExits = await User.findOne({ username });
+    if (usernameExits) {
+      return NextResponse.json("Username already in use", { status: 400 });
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const token = jwt.sign({ email, username }, "JWT_SECRET", {
