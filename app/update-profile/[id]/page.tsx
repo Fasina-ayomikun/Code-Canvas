@@ -25,7 +25,7 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
   const handleSession = async () => {
     const response = await getSession();
 
-    session && setSession(response);
+    response && setSession(response);
   };
   const handleTags = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -123,7 +123,7 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
       });
       console.log(response);
       if (response.ok) {
-        router.push("/feed");
+        router.push(`/profile/${session?.username}`);
       }
     } catch (error) {
       console.log(error);
