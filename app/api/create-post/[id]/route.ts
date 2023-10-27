@@ -26,7 +26,7 @@ export const PATCH = async (
   req: Request,
   { params }: { params: { id: string } }
 ) => {
-  const { desc, tags, image, comment, liked } = await req.json();
+  const { desc, tags, image, liked } = await req.json();
   try {
     await connectToDB();
     const postExists = await Post.findById(params.id);
@@ -37,7 +37,6 @@ export const PATCH = async (
     postExists.desc = desc;
     postExists.tags = tags;
     postExists.image = image;
-    postExists.comments = [...postExists.comments, comment];
     if (liked) {
       postExists.noOfLikes += 1;
     }
