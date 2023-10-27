@@ -31,11 +31,6 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
   //   session && setSession(response);
   // };
 
-<<<<<<< HEAD
-=======
-    response && setSession(response);
-  };
->>>>>>> 54961a570a833a6d291ce8a19b17235a9b7bc10c
   const handleTags = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTagText(value);
