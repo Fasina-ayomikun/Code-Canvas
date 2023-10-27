@@ -28,8 +28,7 @@ export type SessionType = {
 };
 export type PostCardProps = {
   key: number;
-  postId: string;
-  session: SessionType | null;
+  post: PostProps;
   fetchPosts: () => void;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 
@@ -38,11 +37,23 @@ export type PostCardProps = {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export type CommentProp = {
+  creator: string | null | undefined;
+  desc: string;
+  post: string;
+};
+export type SingleCommentProps = {
+  createdAt: string;
   creator: {
-    image: string | null | undefined;
-    name: string | null | undefined;
-    username: string | null | undefined;
+    _id: string;
+    name: string;
+    username: string;
+    email: string;
+    bio: string;
+    image: string;
   };
   desc: string;
-  createdAt: string;
+  post: string;
+  updatedAt: string;
+  __v: number;
+  _id: string;
 };

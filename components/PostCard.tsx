@@ -13,24 +13,20 @@ const PostCard = ({
   setIsEditing,
   fetchPosts,
   setOpenModal,
-  postId,
-  session,
+  post,
 }: PostCardProps) => {
+  const data = localStorage.getItem("CODE_CANVAS_SESSION_USER");
+  const session = data ? JSON.parse(data) : null;
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [postComment, setPostComment] = useState<CommentProp>({
-    creator: {
-      image: session?.image,
-      name: session?.name,
-      username: session?.username,
-    },
     desc: "",
-    createdAt: "",
+    creator: session?.id,
+    post: post._id,
   });
-  const [post, setPost] = useState<PostProps | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isCommenting, setIsCommenting] = useState(false);
   const [openCommentModal, setOpenCommentModal] = useState("");
-
+  const [allComments, setAllComments] = useState([]);
   const dropDownContent = [
     {
       title: "Edit Post",
@@ -53,56 +49,47 @@ const PostCard = ({
       },
     },
   ];
-  const handleStateChange = (name: string, value: string) => {
-    setPostComment((prev) => {
-      return { ...prev, [name]: value };
-    });
-  };
 
-  const UpdatePost = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const created = new Date(Date.now()).toString();
+  const fetchComments = async () => {
     try {
-      const response = await fetch(`/api/create-post/${postId}`, {
-        method: "PATCH",
+      const response = await fetch(`/api/comments`, {
+        method: "POST",
         body: JSON.stringify({
-          desc: post?.desc,
-          tags: post?.tags,
-          image: post?.image,
-          liked: isLiked,
-          comment: { ...postComment, createdAt: created },
+          creator: session?.id,
+          post: post?._id,
         }),
       });
+      const data = await response.json();
       if (response.ok) {
-        fetchSinglePost();
-        setPostComment({
-          creator: {
-            image: session?.image,
-            name: session?.name,
-            username: session?.username,
-          },
-          desc: "",
-          createdAt: "",
-        });
+        console.log(data);
+
+        setAllComments(data.comments);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const createComment = async () => {
+    setIsCommenting(true);
+    try {
+      if (!session) return;
+      const response = await fetch(`/api/comments/new`, {
+        method: "POST",
+        body: JSON.stringify(postComment),
+      });
+      if (response.ok) {
+        setPostComment({ desc: "", creator: session?.id, post: post._id });
+        fetchComments();
       }
     } catch (error) {
       console.log(error);
     } finally {
-      setIsLoading(false);
+      setIsCommenting(false);
     }
   };
-  const fetchSinglePost = async () => {
-    try {
-      const response = await fetch(`/api/create-post/${postId}`);
-      const data = await response.json();
-      data && setPost(data?.post);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
   useEffect(() => {
-    fetchSinglePost();
+    fetchComments();
   }, []);
   // the drop down should disappear when user clicks outside the modal
   useEffect(() => {
@@ -183,7 +170,9 @@ const PostCard = ({
               alt=''
               width={20}
               height={20}
-              onClick={() => setIsLiked((prev) => !prev)}
+              onClick={() => {
+                setIsLiked((prev) => !prev);
+              }}
               className='object-contain'
             />
             {/* TODO:Makesure the likes exclude you */}
@@ -199,7 +188,7 @@ const PostCard = ({
                   return "";
                 }
 
-                return postId;
+                return post._id;
               })
             }
           >
@@ -210,23 +199,29 @@ const PostCard = ({
               height={20}
               className='object-contain'
             />
-            <p className='text-sm'>{post?.comments.length} Comments</p>
+            <p className='text-sm'>
+              {allComments.length} Comment{allComments.length < 2 ? "" : "s"}
+            </p>
           </div>
         </div>
       </div>
-      {openCommentModal === postId && (
+      {openCommentModal === post._id && (
         <>
           <form
-            onSubmit={UpdatePost}
+            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+              e.preventDefault();
+              createComment();
+            }}
             className='w-full bg-white rounded-md px-5 py-3'
           >
             <div className='w-full bg-gray-100  rounded-md min-h-[50px]  h-fit flex items-center gap-3 px-3'>
               <textarea
                 name='desc'
                 required
-                value={postComment.desc}
                 onChange={(e) =>
-                  handleStateChange(e.target.name, e.target.value)
+                  setPostComment((prev) => {
+                    return { ...prev, desc: e.target.value };
+                  })
                 }
                 placeholder='Share your comment..'
                 className='w-full h-full bg-transparent text-link-blue focus:outline-none text-sm  py-2 px-3'
@@ -234,13 +229,19 @@ const PostCard = ({
               <CustomButton
                 btnType='submit'
                 text='Post'
-                isLoading={isLoading}
+                isLoading={isCommenting}
                 handleClick={() => {}}
                 styles=' bg-transparent underline text-link-blue font-bold  mx-auto text-md'
               />
             </div>
           </form>
-          <Comments comments={post?.comments} />
+          {allComments.length < 1 ? (
+            <p className='text-sm ml-3 text-dark-gray mt-5'>
+              Be the first to comment...
+            </p>
+          ) : (
+            <Comments comments={allComments} fetchComments={fetchComments} />
+          )}
         </>
       )}
     </>

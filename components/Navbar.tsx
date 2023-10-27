@@ -13,15 +13,13 @@ import CustomButton from "./CustomButton";
 
 const Navbar = ({
   setOpenModal,
-  session,
 }: {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  session: SessionType | null;
 }) => {
   const [searchText, setSearchText] = useState("");
   const [isFixed, setIsFixed] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
-
+  const [session, setSession] = useState<SessionType | null>(null);
   const router = useRouter();
   //TODO:Put ina separate file
   const dropDownContent = [
@@ -64,9 +62,17 @@ const Navbar = ({
       iconUrl: "/notice.svg",
     },
   ];
+  const handleSession = async () => {
+    const data = await getSession();
+    if (data) {
+      setSession(data);
+    }
+  };
   useEffect(() => {
+    handleSession();
     console.log(session);
   }, []);
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 100) {

@@ -75,7 +75,6 @@ export const authOptions = {
         email: session?.user.email,
       });
       session.user.id = sessionUser?._id.toString();
-      console.log("session", sessionUser);
 
       return {
         ...session.user,
@@ -84,7 +83,7 @@ export const authOptions = {
         bio: sessionUser.bio,
         tags: sessionUser.tags,
         bannerImage: sessionUser?.bannerImage,
-        image: session?.user?.image,
+        image: sessionUser?.image,
       };
     },
     //TODO: When deleting account redirect to login page

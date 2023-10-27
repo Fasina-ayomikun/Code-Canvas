@@ -11,6 +11,8 @@ import RecentNotifications from "@/components/RecentNotifications";
 import SuggestedPeople from "@/components/SuggestedPeople";
 import { getSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setSessionUserDetails } from "@/redux/slices/profile";
 
 const Feed = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -19,7 +21,7 @@ const Feed = () => {
   const [session, setSession] = useState<SessionType | null>(null);
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const dispatch = useDispatch();
   const fetchPosts = async () => {
     setIsLoading(true);
     try {
@@ -38,7 +40,7 @@ const Feed = () => {
     const data = await getSession();
     if (data) {
       console.log(data);
-
+      localStorage.setItem("CODE_CANVAS_SESSION_USER", JSON.stringify(data));
       setSession(data);
     }
   };
@@ -56,7 +58,7 @@ const Feed = () => {
 
   return (
     <>
-      <Navbar setOpenModal={setOpenModal} session={session} />
+      <Navbar setOpenModal={setOpenModal} />
       {openModal && (
         <CreatePostModal
           setPostToEdit={setPostToEdit}
@@ -75,7 +77,6 @@ const Feed = () => {
         <div className='col-span-6 mx-auto px-10 sm:px-20  lg:px-3 w-full'>
           <MiniSearch session={session} />
           <Posts
-            session={session}
             setIsEditing={setIsEditing}
             isEditing={isEditing}
             isLoading={isLoading}

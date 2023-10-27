@@ -11,40 +11,38 @@ const Posts = ({
   isLoading,
   fetchPosts,
   posts,
-  session,
 }: {
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   fetchPosts: () => void;
   isLoading: boolean;
   posts: PostProps[];
   isEditing: boolean;
-  session: SessionType | null;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setPostToEdit: React.Dispatch<React.SetStateAction<PostProps | null>>;
 }) => {
   if (isLoading) {
     //TODO:Add Custom loading
-    return <MiniLoader width="30" />;
+    return <MiniLoader width='30' />;
   }
 
   return (
     <section>
       {posts?.length === 0 ? (
-        <p className="font-medium text-xl text-center mt-10">No post</p>
-      ) :
-      posts?.map((post, index) => {
-        return (
-          <PostCard
-            fetchPosts={fetchPosts}
-            setOpenModal={setOpenModal}
-            setPostToEdit={setPostToEdit}
-            key={index}
-            postId={post?._id}
-            session={session}
-            setIsEditing={setIsEditing}
-          />
-        );
-      })}
+        <p className='font-medium text-xl text-center mt-10'>No post</p>
+      ) : (
+        posts?.map((post, index) => {
+          return (
+            <PostCard
+              fetchPosts={fetchPosts}
+              setOpenModal={setOpenModal}
+              setPostToEdit={setPostToEdit}
+              key={index}
+              post={post}
+              setIsEditing={setIsEditing}
+            />
+          );
+        })
+      )}
     </section>
   );
 };

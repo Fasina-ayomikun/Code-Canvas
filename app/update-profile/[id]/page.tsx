@@ -9,24 +9,28 @@ import { useRouter } from "next/navigation";
 import { SessionType } from "@/common.types";
 import { getSession } from "next-auth/react";
 import { BsFillCameraFill } from "react-icons/bs";
+import { useSelector } from "react-redux";
 
 const UpdateProfile = ({ params }: { params: { id: string } }) => {
+  const data = localStorage.getItem("CODE_CANVAS_SESSION_USER");
+  const sessionUser = data ? JSON.parse(data) : {};
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [bio, setBio] = useState("");
   const [tagText, setTagText] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>(sessionUser.tags || []);
   const [image, setImage] = useState("");
   const [bannerImage, setBannerImage] = useState("");
   const [preview, setPreview] = useState("");
-  const [session, setSession] = useState<SessionType | null>(null);
   const router = useRouter();
+  //TODO change type any
+  const { sessionUserDetails: session } = useSelector((s: any) => s.profile);
+  // const handleSession = async () => {
+  //   const response = await getSession();
 
-  const handleSession = async () => {
-    const response = await getSession();
+  //   session && setSession(response);
+  // };
 
-    session && setSession(response);
-  };
   const handleTags = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTagText(value);
@@ -115,10 +119,10 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
       const response = await fetch(`/api/auth/update-profile/${params.id}`, {
         method: "PATCH",
         body: JSON.stringify({
-          bio: bio || session?.bio,
-          tags: tags || session?.tags,
-          bannerImage: data?.url || session?.bannerImage,
-          image: imageData?.url || session?.image,
+          bio: bio,
+          tags: tags || sessionUser?.tags,
+          bannerImage: data?.url || sessionUser?.bannerImage,
+          image: imageData?.url || sessionUser?.image,
         }),
       });
       console.log(response);
@@ -132,7 +136,7 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
     }
   };
   useEffect(() => {
-    handleSession();
+    console.log(data);
   }, []);
   return (
     <section className='bg-background  mx-auto  h-full sm:h-screen w-1/2  '>
@@ -148,9 +152,9 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
               </p>
               {/* FIXME:Show default image */}
               <label htmlFor='file' className='cursor-pointer'>
-                {session?.image ? (
+                {sessionUser?.image ? (
                   <Image
-                    src={session?.image}
+                    src={sessionUser?.image}
                     alt='profile'
                     fill
                     className='object-contain '
@@ -203,7 +207,7 @@ const UpdateProfile = ({ params }: { params: { id: string } }) => {
             <CustomInput
               styles='bg-transparent  h-12 border-gray-300 rounded-sm'
               type='bio'
-              value={session?.bio}
+              defaultValue={sessionUser?.bio || ""}
               isPassword={false}
               setValue={setBio}
             />
