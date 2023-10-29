@@ -6,6 +6,7 @@ export type PostProps = {
     image: string;
     name: string;
     username: string;
+    _id: string
   };
   createdAt: string;
   updatedAt: string;
@@ -13,6 +14,7 @@ export type PostProps = {
   image: string;
   comments: CommentProp[];
   noOfLikes: number;
+  likesUser: string[];
   tags: string[];
 };
 export type SessionType = {

@@ -18,7 +18,8 @@ const PostCard = ({
   const data = localStorage.getItem("CODE_CANVAS_SESSION_USER");
   const session = data ? JSON.parse(data) : null;
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(post.likesUser.includes(session.id));
+  const [likeNum, setLikeNum] = useState(post.noOfLikes);
   const [postComment, setPostComment] = useState<CommentProp>({
     desc: "",
     creator: session?.id,
@@ -49,6 +50,39 @@ const PostCard = ({
       },
     },
   ];
+
+  const handleToggleLike = async (param: string) => {
+    setIsLiked(prev => !prev);
+    console.log("liking....", param);
+
+    if (param === "like") {
+      setLikeNum(prev => prev + 1);
+    } else {
+      setLikeNum(prev => prev - 1);
+    }
+
+    try {
+      const response = await fetch('/api/likes/toggle', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: session.id,
+          postId: post._id
+        })
+      })
+
+      const data = await response.json();
+
+      if (!response.ok) return
+      
+      console.log(data);
+    } catch (error) {
+      setIsLiked(false);
+      console.log(error);
+    }
+  }
 
   const fetchComments = async () => {
     try {
@@ -165,20 +199,38 @@ const PostCard = ({
         </div>
         <div className='py-4 pt-3 flex items-center justify-between gap-3'>
           <div className='flex items-center gap-2'>
-            <Image
-              src={`${isLiked ? "/like-filled.svg" : "/like.svg"}`}
-              alt=''
-              width={20}
-              height={20}
-              onClick={() => {
-                setIsLiked((prev) => !prev);
-              }}
-              className='object-contain'
-            />
+            {
+              isLiked ? (
+                <Image
+                  src="/like-filled.svg"
+                  alt=''
+                  width={20}
+                  height={20}
+                  onClick={() => handleToggleLike("unlike")}
+                  className='object-contain'
+                />
+              ) : (
+                <Image
+                  src="/like.svg"
+                  alt=''
+                  width={20}
+                  height={20}
+                  onClick={() => handleToggleLike("like")}
+                  className='object-contain'
+                />
+              )
+            }
             {/* TODO:Makesure the likes exclude you */}
-            <p className='text-sm '>
-              You and {post?.noOfLikes} others liked this
-            </p>
+
+            {isLiked && likeNum > 1 ? (
+              <p className="text-sm">You and {likeNum - 1} others like this</p>
+            ) : isLiked ? (
+              <p className="text-sm">You like this</p>
+            ) : likeNum > 0 ? (
+              <p className="text-sm">{likeNum} {likeNum > 1 ? 'people' : 'person'} likes this</p>
+            ) : null}
+
+
           </div>
           <div
             className='cursor-pointer flex items-center gap-2'

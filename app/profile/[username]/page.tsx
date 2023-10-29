@@ -78,7 +78,6 @@ function Profile({ params }: { params: { username: string } }) {
             setIsEditing={() => {}}
             setOpenModal={() => {}}
             setPostToEdit={() => {}}
-            session={session}
           />
         </div>
       </div>
