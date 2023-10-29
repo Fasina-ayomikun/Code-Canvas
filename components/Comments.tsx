@@ -27,7 +27,7 @@ const Comments = ({
     }
   };
   return (
-    <div className='mt-5'>
+    <div className='mt-5 h-[500px] overflow-y-scroll'>
       {comments &&
         comments?.map((comment: SingleCommentProps) => (
           <div className='w-full bg-white my-2 py-3 px-4  rounded-md  '>

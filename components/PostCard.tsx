@@ -52,37 +52,37 @@ const PostCard = ({
   ];
 
   const handleToggleLike = async (param: string) => {
-    setIsLiked(prev => !prev);
+    setIsLiked((prev) => !prev);
     console.log("liking....", param);
 
     if (param === "like") {
-      setLikeNum(prev => prev + 1);
+      setLikeNum((prev) => prev + 1);
     } else {
-      setLikeNum(prev => prev - 1);
+      setLikeNum((prev) => prev - 1);
     }
 
     try {
-      const response = await fetch('/api/likes/toggle', {
+      const response = await fetch("/api/likes/toggle", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           userId: session.id,
-          postId: post._id
-        })
-      })
+          postId: post._id,
+        }),
+      });
 
       const data = await response.json();
 
-      if (!response.ok) return
-      
+      if (!response.ok) return;
+
       console.log(data);
     } catch (error) {
       setIsLiked(false);
       console.log(error);
     }
-  }
+  };
 
   const fetchComments = async () => {
     try {
@@ -199,38 +199,36 @@ const PostCard = ({
         </div>
         <div className='py-4 pt-3 flex items-center justify-between gap-3'>
           <div className='flex items-center gap-2'>
-            {
-              isLiked ? (
-                <Image
-                  src="/like-filled.svg"
-                  alt=''
-                  width={20}
-                  height={20}
-                  onClick={() => handleToggleLike("unlike")}
-                  className='object-contain'
-                />
-              ) : (
-                <Image
-                  src="/like.svg"
-                  alt=''
-                  width={20}
-                  height={20}
-                  onClick={() => handleToggleLike("like")}
-                  className='object-contain'
-                />
-              )
-            }
+            {isLiked ? (
+              <Image
+                src='/like-filled.svg'
+                alt=''
+                width={20}
+                height={20}
+                onClick={() => handleToggleLike("unlike")}
+                className='object-contain'
+              />
+            ) : (
+              <Image
+                src='/like.svg'
+                alt=''
+                width={20}
+                height={20}
+                onClick={() => handleToggleLike("like")}
+                className='object-contain'
+              />
+            )}
             {/* TODO:Makesure the likes exclude you */}
 
             {isLiked && likeNum > 1 ? (
-              <p className="text-sm">You and {likeNum - 1} others like this</p>
+              <p className='text-sm'>You and {likeNum - 1} others like this</p>
             ) : isLiked ? (
-              <p className="text-sm">You like this</p>
+              <p className='text-sm'>You like this</p>
             ) : likeNum > 0 ? (
-              <p className="text-sm">{likeNum} {likeNum > 1 ? 'people' : 'person'} likes this</p>
+              <p className='text-sm'>
+                {likeNum} {likeNum > 1 ? "people" : "person"} likes this
+              </p>
             ) : null}
-
-
           </div>
           <div
             className='cursor-pointer flex items-center gap-2'
@@ -269,6 +267,7 @@ const PostCard = ({
             <div className='w-full bg-gray-100  rounded-md min-h-[50px]  h-fit flex items-center gap-3 px-3'>
               <textarea
                 name='desc'
+                value={postComment?.desc}
                 required
                 onChange={(e) =>
                   setPostComment((prev) => {

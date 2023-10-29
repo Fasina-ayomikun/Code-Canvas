@@ -9,11 +9,15 @@
   padding: 0;
   box-sizing: border-box;
 }
-
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #949393 transparent;
+}
 body {
   font-family: Inter;
   overflow-x: hidden;
 }
+
 .box_shadow1 {
   box-shadow: 0px 5px 10px -3px rgba(66, 64, 64, 0.89);
   -webkit-box-shadow: 0px 5px 10px -3px rgba(66, 64, 64, 0.89);
@@ -29,3 +33,23 @@ body {
   height: auto;
   min-height: 500px;
 }
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #949393;
+  border-radius: 6px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-track {
+  background: #f2f2f2; /* Track color */
+}
+
+/* For Firefox (From Firefox 64 onwards) */
+/* scrollbar-width: thin; /* "auto" or "thin" or "none" */
+/* scrollbar-color: #2a2a2a #f2f2f2; thumb and track color */
