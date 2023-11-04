@@ -14,30 +14,38 @@ import { useDispatch, useSelector } from "react-redux";
 import usePost from "@/hooks/usePost";
 import PageLoader from "@/components/loader/PageLoader";
 import { SessionType } from "@/common.types";
+import useFollow from "@/hooks/useFollow";
 
 function Profile({ params }: { params: { username: string } }) {
   const [session, setSession] = useState<SessionType | null>(null);
   const [gettingUser, setGettingUser] = useState(false);
   const { getUserDetails } = useAuth();
   const { fetchUserPost } = usePost();
+  const { isFollowing, getUserFollowersAndFollowing } = useFollow();
   const dispatch = useDispatch();
   const { userDetails } = useSelector((state: any) => state.profile);
   const { posts } = useSelector((state: any) => state.post);
-  const { isLoading, isFetchingUserDetails } = useSelector(
+  const { isLoading, isFetchingUserDetails, isLoadingFollowing } = useSelector(
     (state: any) => state.loading
   );
+
   const handleSession = async () => {
     const data = await getSession();
     if (data) {
       setSession(data);
     }
-  };
+  }
+
   useLayoutEffect(() => {
     if (isLoading) return;
 
     dispatch(setSessionUserDetails(session));
 
-    if (session?.id === userDetails._id) {
+    if (session && userDetails) {
+      isFollowing({ followerId: session?.id as string, followingId: userDetails._id});
+    }
+
+    if (session && userDetails && session?.id === userDetails._id) {
       dispatch(setIsLoggedInUser(true));
     }
   }, [session, userDetails]);
@@ -45,16 +53,15 @@ function Profile({ params }: { params: { username: string } }) {
   useLayoutEffect(() => {
     if (!userDetails._id) return;
     fetchUserPost({ userId: userDetails._id });
+    getUserFollowersAndFollowing({ id: userDetails._id });
   }, [userDetails._id]);
 
   useEffect(() => {
     handleSession();
     getUserDetails(params?.username, setGettingUser);
-
-    console.log(params?.username);
   }, []);
 
-  if (isFetchingUserDetails || isLoading) {
+  if (isFetchingUserDetails || isLoading || !session || !userDetails || isLoadingFollowing) {
     return <PageLoader />;
   }
 
