@@ -1,19 +1,45 @@
 "use client";
+import useFollow from "@/hooks/useFollow";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { AiTwotoneEdit } from "react-icons/ai";
 import { BsFillChatDotsFill } from "react-icons/bs";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { useSelector } from "react-redux";
+import { MdDoneOutline } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
+import MiniLoader from "../loader/MiniLoader";
+import { setIsFollowing } from "@/redux/slices/profile";
 
 function Header() {
-  const { isLoggedInUser, userDetails, sessionUserData } = useSelector(
+  const { isLoggedInUser, userDetails, sessionUserData, isFollowing, follow } = useSelector(
     (state: any) => state.profile
   );
-  // console.log(isLoggedInUser, userDetails, sessionUserData);
 
-  useEffect(() => {}, []);
+  const dispatch = useDispatch();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { toggleFollow } = useFollow();
+
+  const handleFollow = async () => {
+    setIsLoading(true);
+    
+    if (isFollowing) {
+      dispatch(setIsFollowing(false));
+    } else {
+      dispatch(setIsFollowing(true));
+    }
+    // console.log(isLoggedInUser, userDetails, sessionUserData);
+    try {
+      await toggleFollow({ followerId: sessionUserData.id, followingId: userDetails._id})
+    } catch (error) {
+      console.log(error);
+      dispatch(setIsFollowing(false));
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <div className='bg-white h-[480px] shadow-md pb-10'>
@@ -48,11 +74,11 @@ function Header() {
           </div>
           <div className='flex justify-center items-center gap-2'>
             <p className='text-sm text-gray-600 cursor-pointer'>
-              4.1k followers
+              {follow.follower?.length} follower{follow.follower?.length > 1 ? 's' : ''}
             </p>
             <p className='rounded-full bg-gray-600 w-[6px] h-[6px]' />
             <p className='text-sm text-gray-600 cursor-pointer'>
-              4.1k following
+              {follow.following?.length} following
             </p>
           </div>
         </div>
@@ -75,10 +101,33 @@ function Header() {
             <p>Message</p>
           </div>
 
-          <div className='bg-blue-600 text-white rounded-md p-2 px-3 flex justify-center items-center gap-2 cursor-pointer'>
-            <IoIosAddCircleOutline size={20} color='white' />
-            <p>Follow</p>
-          </div>
+          {
+            isLoading ? (
+              <div className="bg-blue-600 w-28 rounded-md py-[10px]">
+                <MiniLoader width="20" strokeColor="white" />
+              </div>
+            ) : (
+              <button
+                disabled={isLoading}
+                onClick={handleFollow}
+                className='bg-blue-600 text-white rounded-md p-2 px-3 flex justify-center items-center gap-2 cursor-pointer'>
+                {
+                  isFollowing ? (
+                    <>
+                      <MdDoneOutline size={20} color='white' />
+                      <p>Following</p>
+                    </>
+                  ) : (
+                    <>
+                      <IoIosAddCircleOutline size={20} color='white' />
+                      <p>Follow</p>
+                    </>
+                  )
+                }
+          </button>
+            )
+          }
+
         </div>
       )}
     </div>

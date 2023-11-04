@@ -4,7 +4,8 @@ const loadingSlice = createSlice({
     name: "loading",
     initialState: {
         isUserPostLoading: false,
-        isFetchingUserDetails: false
+        isFetchingUserDetails: false,
+        isLoadingFollowing: false
     },
     reducers: {
         toggleIsUserPostLoading(state) {
@@ -12,10 +13,17 @@ const loadingSlice = createSlice({
         },
         toggleIsFetchingUserDetails(state) {
             state.isFetchingUserDetails = !state.isFetchingUserDetails;
+        },
+        toggleIsLoadingFollowing(state) {
+            state.isLoadingFollowing = !state.isLoadingFollowing;
         }
     }
 })
 
-export const { toggleIsUserPostLoading, toggleIsFetchingUserDetails } = loadingSlice.actions;
+export const { 
+    toggleIsUserPostLoading, 
+    toggleIsFetchingUserDetails,
+    toggleIsLoadingFollowing
+} = loadingSlice.actions;
 
 export default loadingSlice.reducer;

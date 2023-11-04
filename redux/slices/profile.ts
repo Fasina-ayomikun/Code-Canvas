@@ -5,7 +5,9 @@ const profileSlice = createSlice({
     initialState: {
         isLoggedInUser: false,
         userDetails: {},
-        sessionUserData: {}
+        sessionUserData: {},
+        isFollowing: false,
+        follow: {}
     },
     reducers: {
         setIsLoggedInUser(state, action) {
@@ -17,13 +19,21 @@ const profileSlice = createSlice({
         setSessionUserDetails(state, action) {
             state.sessionUserData = action.payload;
         },
+        setIsFollowing(state, action) {
+            state.isFollowing = action.payload;
+        },
+        setFollow(state, action) {
+            state.follow = action.payload;
+        }
     }
 });
 
 export const { 
     setIsLoggedInUser, 
     setUserDetails,
-    setSessionUserDetails
+    setSessionUserDetails,
+    setIsFollowing,
+    setFollow
 } = profileSlice.actions;
 
 export default profileSlice.reducer;
