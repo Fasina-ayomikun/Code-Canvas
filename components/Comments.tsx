@@ -8,11 +8,13 @@ import { AiFillDelete } from "react-icons/ai";
 const Comments = ({
   comments,
   fetchComments,
+  sessionId,
 }: {
   comments: SingleCommentProps[];
   fetchComments: () => void;
+  sessionId: string;
 }) => {
-  console.log(comments);
+  console.log(comments, "creator", sessionId);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const deleteComment = async (commentId: string) => {
     try {
@@ -27,7 +29,7 @@ const Comments = ({
     }
   };
   return (
-    <div className='mt-5 h-[500px] overflow-y-scroll'>
+    <div className='mt-5 max-h-[500px] overflow-y-scroll'>
       {comments &&
         comments?.map((comment: SingleCommentProps) => (
           <div className='w-full bg-white my-2 py-3 px-4  rounded-md  '>
@@ -51,12 +53,14 @@ const Comments = ({
                   </p>
                 </div>
               </div>
-              <AiFillDelete
-                className='text-md text-red-300'
-                onClick={() => {
-                  deleteComment(comment?._id);
-                }}
-              />
+              {sessionId && comment?.creator?._id === sessionId && (
+                <AiFillDelete
+                  className='text-md text-red-300'
+                  onClick={() => {
+                    deleteComment(comment?._id);
+                  }}
+                />
+              )}
             </div>
             <p className='text-sm font-regular mt-2'> {comment?.desc}</p>
             <span className='text-xs text-gray-500 flex items-end justify-end '>

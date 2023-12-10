@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import useFollow from "@/hooks/useFollow";
 import { setIsFollowing, setIsFollowingId } from "@/redux/slices/profile";
 import { Oval } from "react-loader-spinner";
+import { SessionType } from "@/common.types";
+import { useRouter } from "next/navigation";
 type UserProp = {
   name: string;
   username: string;
@@ -25,16 +27,23 @@ const SuggestedPeople = () => {
   } = useSelector((state: any) => state.profile);
 
   const dispatch = useDispatch();
-
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState({ loading: false, userId: "" });
 
   const { toggleFollow } = useFollow();
+  let session = localStorage.getItem("CODE_CANVAS_SESSION_USER");
+  session = session ? JSON.parse(session) : null;
   const getRandomUsers = async () => {
     try {
       const res = await fetch("/api/auth");
       const data = await res.json();
       if (res.ok) {
-        setRandomUsers(data.users);
+        const newRandomwUsers = data?.users?.filter(
+          (user: any) => user?._id !== session?.id
+        );
+        console.log(newRandomwUsers, "new");
+
+        setRandomUsers(newRandomwUsers);
       }
       console.log(data);
     } catch (error) {
@@ -86,6 +95,9 @@ const SuggestedPeople = () => {
               alt='profile'
               width={40}
               height={40}
+              onClick={() => {
+                router.push(`/profile/${user?.username}`);
+              }}
               className=' aspect-square object-cover rounded-full'
             />
             <div className='w-full'>

@@ -53,6 +53,7 @@ export default () => {
   const getUserFollowersAndFollowing = async ({ id }: { id: string }) => {
     try {
       const response = await axios().get(`/follow/${id}`);
+      console.log(response, "fooo");
 
       dispatch(setFollow(response.data));
     } catch (error) {

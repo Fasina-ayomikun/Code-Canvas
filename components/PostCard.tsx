@@ -291,7 +291,11 @@ const PostCard = ({
               Be the first to comment...
             </p>
           ) : (
-            <Comments comments={allComments} fetchComments={fetchComments} />
+            <Comments
+              sessionId={session?.id}
+              comments={allComments}
+              fetchComments={fetchComments}
+            />
           )}
         </>
       )}
